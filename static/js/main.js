@@ -3,7 +3,7 @@ async function wakeDevice(deviceId, buttonElement) {
     // Disable button and show loading
     const originalText = buttonElement.textContent;
     buttonElement.disabled = true;
-    buttonElement.innerHTML = '⏳ Envoi...';
+    buttonElement.textContent = '⏳ Envoi...';
     
     try {
         const response = await fetch(`/wake/${deviceId}`, {
@@ -17,19 +17,19 @@ async function wakeDevice(deviceId, buttonElement) {
         
         if (data.success) {
             showNotification(data.message, 'success');
-            buttonElement.innerHTML = '✓ Envoyé';
+            buttonElement.textContent = '✓ Envoyé';
             setTimeout(() => {
-                buttonElement.innerHTML = originalText;
+                buttonElement.textContent = originalText;
                 buttonElement.disabled = false;
             }, 3000);
         } else {
             showNotification(data.message, 'error');
-            buttonElement.innerHTML = originalText;
+            buttonElement.textContent = originalText;
             buttonElement.disabled = false;
         }
     } catch (error) {
         showNotification('Erreur de connexion au serveur', 'error');
-        buttonElement.innerHTML = originalText;
+        buttonElement.textContent = originalText;
         buttonElement.disabled = false;
     }
 }

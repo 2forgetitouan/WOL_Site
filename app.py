@@ -93,8 +93,9 @@ def send_wol_packet(mac_address, ip_address='255.255.255.255', port=9):
         sock.close()
         
         return True, "Paquet WOL envoyé avec succès"
-    except Exception as e:
-        return False, f"Erreur lors de l'envoi: {str(e)}"
+    except Exception:
+        # Don't expose internal exception details to users
+        return False, "Erreur lors de l'envoi du paquet WOL"
 
 # Routes
 @app.route('/')
@@ -301,4 +302,7 @@ def contact():
 
 if __name__ == '__main__':
     init_db()
-    app.run(debug=True, host='0.0.0.0', port=5000)
+    # Debug mode should only be enabled in development
+    # Set FLASK_DEBUG=0 in production environment
+    debug_mode = os.environ.get('FLASK_DEBUG', 'True').lower() in ('true', '1', 'yes')
+    app.run(debug=debug_mode, host='0.0.0.0', port=5000)
