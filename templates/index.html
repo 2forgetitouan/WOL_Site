@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+
+{% block title %}Accueil - WOL Site{% endblock %}
+
+{% block content %}
+<div class="hero">
+    <h1>⚡ Wake-On-LAN Site</h1>
+    <p>Allumez vos ordinateurs à distance, où que vous soyez</p>
+    <div class="btn-group">
+        {% if session.user_id %}
+            <a href="{{ url_for('dashboard') }}" class="btn">Accéder au tableau de bord</a>
+        {% else %}
+            <a href="{{ url_for('register') }}" class="btn">Créer un compte</a>
+            <a href="{{ url_for('login') }}" class="btn btn-secondary">Se connecter</a>
+        {% endif %}
+    </div>
+</div>
+
+<div class="features-grid">
+    <div class="feature">
+        <div>🖥️</div>
+        <h3>Gestion d'appareils</h3>
+        <p>Enregistrez et gérez tous vos appareils compatibles Wake-On-LAN</p>
+    </div>
+    <div class="feature">
+        <div>🔐</div>
+        <h3>Sécurisé</h3>
+        <p>Authentification utilisateur avec sessions sécurisées</p>
+    </div>
+    <div class="feature">
+        <div>🌍</div>
+        <h3>À distance</h3>
+        <p>Allumez vos ordinateurs depuis n'importe où via Internet</p>
+    </div>
+    <div class="feature">
+        <div>📱</div>
+        <h3>Responsive</h3>
+        <p>Interface adaptée aux mobiles, tablettes et ordinateurs</p>
+    </div>
+</div>
+
+<div class="card">
+    <h2 class="card-title">Qu'est-ce que Wake-On-LAN ?</h2>
+    <p>
+        Wake-On-LAN (WOL) est une norme de réseau informatique qui permet d'allumer un ordinateur à distance 
+        en envoyant un paquet réseau spécial appelé "paquet magique". Cette technologie est particulièrement 
+        utile pour :
+    </p>
+    <ul style="margin: 1rem 0 1rem 2rem;">
+        <li>Accéder à distance à votre ordinateur personnel</li>
+        <li>Gérer des serveurs sans être physiquement présent</li>
+        <li>Économiser de l'énergie en éteignant les machines non utilisées</li>
+        <li>Automatiser le démarrage de machines pour des tâches planifiées</li>
+    </ul>
+    <div class="btn-group">
+        <a href="{{ url_for('help_page') }}" class="btn btn-secondary">En savoir plus</a>
+    </div>
+</div>
+{% endblock %}
