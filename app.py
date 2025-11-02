@@ -3,13 +3,12 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from functools import wraps
 import sqlite3
 import socket
-import struct
 import re
 import os
-from datetime import datetime
 
 app = Flask(__name__)
-app.secret_key = os.urandom(24)
+# Use environment variable for secret key in production, fallback to random for development
+app.secret_key = os.environ.get('SECRET_KEY', os.urandom(24))
 
 DATABASE = 'wol_site.db'
 
