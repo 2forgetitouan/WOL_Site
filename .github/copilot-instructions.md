@@ -46,4 +46,4 @@ When using GitHub Copilot in this repository:
 
 ## Getting Started
 
-Refer to the README.md for setup instructions and project information.
+As the project develops, setup instructions and additional information will be added to the README.md.
