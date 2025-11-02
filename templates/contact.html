@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+
+{% block title %}Contact - WOL Site{% endblock %}
+
+{% block content %}
+<div class="card">
+    <h1 class="card-title">✉️ Contactez-nous</h1>
+    
+    <p style="margin-bottom: 2rem;">
+        Vous avez des questions, des suggestions ou besoin d'aide ? N'hésitez pas à nous contacter !
+    </p>
+
+    <div class="contact-info">
+        <div>📧</div>
+        <div>
+            <h3 style="margin: 0 0 0.5rem;">Email</h3>
+            <a href="mailto:titouan@deforge.me" style="color: var(--primary-color); font-size: 1.1rem; font-weight: bold;">
+                titouan@deforge.me
+            </a>
+        </div>
+    </div>
+
+    <div class="help-section" style="margin-top: 2rem;">
+        <h2>💡 Avant de nous contacter</h2>
+        <p>Pour obtenir de l'aide plus rapidement, consultez d'abord notre page d'aide :</p>
+        <ul>
+            <li>Configuration de Wake-On-LAN dans le BIOS et le système d'exploitation</li>
+            <li>Comment trouver votre adresse MAC</li>
+            <li>Configuration du port forwarding pour l'accès distant</li>
+            <li>Solutions aux problèmes courants</li>
+            <li>Recommandations de sécurité</li>
+        </ul>
+        <div style="margin-top: 1rem;">
+            <a href="{{ url_for('help_page') }}" class="btn btn-secondary">Consulter l'aide</a>
+        </div>
+    </div>
+
+    <div class="help-section">
+        <h2>📝 Informations utiles à inclure dans votre message</h2>
+        <p>Pour nous aider à mieux comprendre votre problème, merci d'inclure :</p>
+        <ul>
+            <li>Une description détaillée de votre problème ou question</li>
+            <li>Votre système d'exploitation (Windows, Linux, macOS)</li>
+            <li>Si vous essayez d'utiliser WOL en local ou à distance</li>
+            <li>Les étapes que vous avez déjà essayées</li>
+            <li>Les messages d'erreur éventuels</li>
+        </ul>
+    </div>
+
+    <div class="card" style="background: #e8f4fd; border-left: 4px solid var(--primary-color); margin-top: 2rem;">
+        <h3 style="color: var(--primary-color); margin-bottom: 0.5rem;">ℹ️ À propos de WOL Site</h3>
+        <p style="margin: 0;">
+            WOL Site est un service gratuit permettant de gérer et contrôler vos appareils compatibles 
+            Wake-On-LAN à distance. Notre mission est de rendre la technologie WOL accessible à tous, 
+            avec une interface simple et sécurisée.
+        </p>
+    </div>
+</div>
+
+<div style="text-align: center; margin-top: 2rem;">
+    <a href="{{ url_for('index') }}" class="btn btn-secondary">← Retour à l'accueil</a>
+    {% if session.user_id %}
+    <a href="{{ url_for('dashboard') }}" class="btn">Tableau de bord →</a>
+    {% endif %}
+</div>
+{% endblock %}

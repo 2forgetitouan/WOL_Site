@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% block title %}Ajouter un appareil - WOL Site{% endblock %}
+
+{% block content %}
+<div class="form-container">
+    <div class="card">
+        <h2 class="card-title">➕ Ajouter un appareil</h2>
+        <form method="POST" action="{{ url_for('add_device') }}" onsubmit="return validateDeviceForm(this)">
+            <div class="form-group">
+                <label for="name">Nom de l'appareil *</label>
+                <input type="text" id="name" name="name" required autofocus placeholder="Ex: Mon PC Bureau">
+                <small>Un nom pour identifier facilement l'appareil</small>
+            </div>
+            
+            <div class="form-group">
+                <label for="mac_address">Adresse MAC *</label>
+                <input type="text" id="mac_address" name="mac_address" required placeholder="XX:XX:XX:XX:XX:XX">
+                <small>L'adresse MAC de la carte réseau (format: XX:XX:XX:XX:XX:XX)</small>
+            </div>
+            
+            <div class="form-group">
+                <label for="ip_address">Adresse IP</label>
+                <input type="text" id="ip_address" name="ip_address" placeholder="192.168.1.100 ou 255.255.255.255">
+                <small>IP locale (192.168.x.x) ou externe. Laisser vide pour broadcast (255.255.255.255)</small>
+            </div>
+            
+            <div class="form-group">
+                <label for="port">Port UDP</label>
+                <input type="number" id="port" name="port" value="9" min="1" max="65535">
+                <small>Port standard: 7 ou 9 (UDP)</small>
+            </div>
+            
+            <div class="form-group">
+                <label for="notes">Notes (optionnel)</label>
+                <textarea id="notes" name="notes" placeholder="Ex: PC du salon, nécessite port forwarding sur le routeur"></textarea>
+                <small>Informations supplémentaires sur cet appareil</small>
+            </div>
+            
+            <div class="form-group">
+                <button type="submit" class="btn" style="width: 100%;">➕ Ajouter l'appareil</button>
+            </div>
+        </form>
+        
+        <div style="margin-top: 1rem; text-align: center;">
+            <a href="{{ url_for('dashboard') }}" style="color: var(--primary-color);">← Retour au tableau de bord</a>
+        </div>
+    </div>
+    
+    <div class="card" style="background: #fff3cd; border-left: 4px solid var(--warning-color);">
+        <h3 style="color: var(--warning-color); margin-bottom: 0.5rem;">💡 Astuce</h3>
+        <p style="margin: 0;">
+            Consultez la <a href="{{ url_for('help_page') }}" style="color: var(--primary-color); font-weight: bold;">page d'aide</a> 
+            pour savoir comment trouver l'adresse MAC de votre appareil et configurer Wake-On-LAN.
+        </p>
+    </div>
+</div>
+{% endblock %}

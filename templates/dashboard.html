@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+
+{% block title %}Tableau de bord - WOL Site{% endblock %}
+
+{% block content %}
+<div class="card">
+    <h1 class="card-title">📊 Tableau de bord</h1>
+    <p>Bienvenue, <strong>{{ session.username }}</strong> !</p>
+    <div class="btn-group" style="justify-content: flex-start; margin-top: 1rem;">
+        <a href="{{ url_for('add_device') }}" class="btn">➕ Ajouter un appareil</a>
+    </div>
+</div>
+
+{% if devices %}
+    <h2 style="margin: 2rem 0 1rem; color: white;">Mes appareils ({{ devices|length }})</h2>
+    <div class="devices-grid">
+        {% for device in devices %}
+        <div class="device-card">
+            <div class="device-name">🖥️ {{ device.name }}</div>
+            <div class="device-info">
+                <strong>MAC:</strong> {{ device.mac_address }}
+            </div>
+            <div class="device-info">
+                <strong>IP:</strong> {{ device.ip_address or '255.255.255.255 (broadcast)' }}
+            </div>
+            <div class="device-info">
+                <strong>Port:</strong> {{ device.port }}
+            </div>
+            {% if device.notes %}
+            <div class="device-info">
+                <strong>Notes:</strong> {{ device.notes }}
+            </div>
+            {% endif %}
+            <div class="device-actions">
+                <button onclick="wakeDevice({{ device.id }}, this)" class="btn btn-secondary btn-small">
+                    ⚡ Wake
+                </button>
+                <form id="delete-form-{{ device.id }}" method="POST" action="{{ url_for('delete_device', device_id=device.id) }}" style="display: inline;">
+                    <button type="button" onclick="confirmDelete({{ device.id }}, '{{ device.name }}')" class="btn btn-danger btn-small">
+                        🗑️ Supprimer
+                    </button>
+                </form>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <div class="card">
+        <div class="empty-state">
+            <div style="font-size: 4rem;">🖥️</div>
+            <h2>Aucun appareil enregistré</h2>
+            <p>Commencez par ajouter votre premier appareil compatible Wake-On-LAN</p>
+            <div style="margin-top: 1.5rem;">
+                <a href="{{ url_for('add_device') }}" class="btn">➕ Ajouter un appareil</a>
+            </div>
+        </div>
+    </div>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,261 @@
+{% extends "base.html" %}
+
+{% block title %}Aide - WOL Site{% endblock %}
+
+{% block content %}
+<div class="card">
+    <h1 class="card-title">❓ Guide d'utilisation Wake-On-LAN</h1>
+    
+    <div class="help-section">
+        <h2>📚 Qu'est-ce que Wake-On-LAN ?</h2>
+        <p>
+            Wake-On-LAN (WOL) est une norme informatique qui permet d'allumer ou de réveiller un ordinateur 
+            à distance en envoyant un paquet réseau spécial appelé "paquet magique". Ce paquet contient 
+            l'adresse MAC de la carte réseau de l'ordinateur cible.
+        </p>
+        <p>
+            Le paquet magique est composé de 6 octets de 0xFF suivis de 16 répétitions de l'adresse MAC 
+            (48 bits) de l'ordinateur cible, pour un total de 102 octets.
+        </p>
+    </div>
+
+    <div class="help-section">
+        <h2>⚙️ Configuration du BIOS</h2>
+        <p>Pour activer Wake-On-LAN, vous devez d'abord l'activer dans le BIOS de votre ordinateur :</p>
+        <ol>
+            <li>Redémarrez votre ordinateur et accédez au BIOS (généralement en appuyant sur F2, F10, DEL ou ESC au démarrage)</li>
+            <li>Cherchez les options liées à l'alimentation (Power Management, Advanced Settings)</li>
+            <li>Activez les options suivantes :
+                <ul>
+                    <li><strong>Wake-On-LAN</strong> ou <strong>PME Event Wake Up</strong></li>
+                    <li><strong>Power On By PCI-E/PCI</strong> (pour certains BIOS)</li>
+                    <li><strong>Wake on Magic Packet</strong></li>
+                </ul>
+            </li>
+            <li>Sauvegardez les modifications et redémarrez</li>
+        </ol>
+    </div>
+
+    <div class="help-section">
+        <h2>🖥️ Configuration du système d'exploitation</h2>
+        
+        <h3>Windows :</h3>
+        <ol>
+            <li>Ouvrez le <strong>Gestionnaire de périphériques</strong></li>
+            <li>Développez <strong>Cartes réseau</strong></li>
+            <li>Clic droit sur votre carte réseau → <strong>Propriétés</strong></li>
+            <li>Onglet <strong>Gestion de l'alimentation</strong> :
+                <ul>
+                    <li>✓ Autoriser ce périphérique à sortir l'ordinateur du mode veille</li>
+                    <li>✓ Autoriser seulement un paquet magique à sortir l'ordinateur du mode veille</li>
+                </ul>
+            </li>
+            <li>Onglet <strong>Avancé</strong> :
+                <ul>
+                    <li>Activez <strong>Wake on Magic Packet</strong></li>
+                    <li>Activez <strong>Wake on pattern match</strong> (optionnel)</li>
+                </ul>
+            </li>
+        </ol>
+
+        <h3>Linux :</h3>
+        <div class="code-block">
+# Installer ethtool<br>
+sudo apt install ethtool<br>
+<br>
+# Vérifier si WOL est supporté<br>
+sudo ethtool eth0 | grep Wake-on<br>
+<br>
+# Activer WOL (g = Magic Packet)<br>
+sudo ethtool -s eth0 wol g<br>
+<br>
+# Pour rendre permanent, créer un script au démarrage<br>
+echo '#!/bin/sh' | sudo tee /etc/network/if-up.d/wol<br>
+echo 'ethtool -s eth0 wol g' | sudo tee -a /etc/network/if-up.d/wol<br>
+sudo chmod +x /etc/network/if-up.d/wol
+        </div>
+
+        <h3>macOS :</h3>
+        <ol>
+            <li>Ouvrez <strong>Préférences Système</strong> → <strong>Économiseur d'énergie</strong></li>
+            <li>Cochez <strong>Réveiller pour l'accès réseau Wi-Fi</strong> ou <strong>Wake for network access</strong></li>
+        </ol>
+    </div>
+
+    <div class="help-section">
+        <h2>🔍 Comment trouver l'adresse MAC ?</h2>
+        
+        <h3>Windows :</h3>
+        <div class="code-block">
+ipconfig /all
+        </div>
+        <p>Cherchez "Adresse physique" dans les informations de votre carte réseau</p>
+
+        <h3>Linux :</h3>
+        <div class="code-block">
+ip link show<br>
+# ou<br>
+ifconfig
+        </div>
+
+        <h3>macOS :</h3>
+        <div class="code-block">
+ifconfig | grep ether
+        </div>
+    </div>
+
+    <div class="help-section">
+        <h2>🌐 Quelle adresse IP utiliser ?</h2>
+        
+        <h3>En réseau local (LAN) :</h3>
+        <ul>
+            <li><strong>Broadcast</strong> : 255.255.255.255 (recommandé pour le réseau local)</li>
+            <li><strong>IP locale</strong> : 192.168.x.x ou 10.x.x.x (si vous connaissez l'IP fixe)</li>
+        </ul>
+
+        <h3>À distance (via Internet) :</h3>
+        <ul>
+            <li><strong>IP externe</strong> : L'adresse IP publique de votre box/routeur</li>
+            <li><strong>Configuration requise</strong> :
+                <ul>
+                    <li>Port forwarding sur votre routeur (redirection du port UDP 7 ou 9)</li>
+                    <li>IP publique fixe ou service DynDNS</li>
+                </ul>
+            </li>
+        </ul>
+
+        <div class="code-block">
+# Exemple de configuration port forwarding :<br>
+Protocole : UDP<br>
+Port externe : 9<br>
+Port interne : 9<br>
+IP interne : 255.255.255.255 (broadcast) ou IP de la machine
+        </div>
+    </div>
+
+    <div class="help-section">
+        <h2>🔌 Ports UDP utilisés</h2>
+        <ul>
+            <li><strong>Port 7</strong> : Port Echo (standard ancien)</li>
+            <li><strong>Port 9</strong> : Port Discard (standard recommandé)</li>
+            <li>Certains équipements acceptent d'autres ports (ex: 2304, 4000)</li>
+        </ul>
+        <p>
+            <strong>Recommandation</strong> : Utilisez le port 9 par défaut. Si cela ne fonctionne pas, 
+            essayez le port 7.
+        </p>
+    </div>
+
+    <div class="help-section">
+        <h2>⚠️ Limitations et contraintes</h2>
+        
+        <h3>Limitations réseau :</h3>
+        <ul>
+            <li><strong>Wi-Fi</strong> : WOL peut ne pas fonctionner en Wi-Fi sur certains ordinateurs. 
+                Une connexion Ethernet est recommandée.</li>
+            <li><strong>VPN</strong> : Les VPN peuvent bloquer les paquets WOL. Configurez votre VPN 
+                pour autoriser le broadcast UDP.</li>
+            <li><strong>Firewall</strong> : Assurez-vous que votre pare-feu autorise le trafic UDP 
+                sur les ports 7 et 9.</li>
+            <li><strong>Switch réseau</strong> : Certains switchs bon marché ne transmettent pas 
+                correctement les paquets magic.</li>
+        </ul>
+
+        <h3>Limitations matérielles :</h3>
+        <ul>
+            <li>La carte réseau doit supporter WOL (la plupart des cartes modernes le font)</li>
+            <li>L'ordinateur doit être connecté à l'alimentation électrique</li>
+            <li>Certains ordinateurs portables ne supportent pas WOL sur batterie</li>
+            <li>Le mode "Arrêt complet" (shutdown) est requis, pas l'hibernation profonde</li>
+        </ul>
+
+        <h3>Box Internet et NAT :</h3>
+        <ul>
+            <li>Pour un accès distant, vous devez configurer le <strong>port forwarding</strong> 
+                sur votre box/routeur</li>
+            <li>Certaines box (4G/5G) ne permettent pas le port forwarding</li>
+            <li>Le CGNAT (Carrier-Grade NAT) peut empêcher WOL distant</li>
+            <li>Solution alternative : VPN personnel (WireGuard, OpenVPN) vers votre réseau local</li>
+        </ul>
+    </div>
+
+    <div class="help-section">
+        <h2>🔒 Sécurité et recommandations</h2>
+        
+        <h3>Bonnes pratiques :</h3>
+        <ul>
+            <li>✓ Utilisez un mot de passe fort pour votre compte WOL Site</li>
+            <li>✓ Ne partagez pas vos identifiants</li>
+            <li>✓ Limitez l'accès au port forwarding uniquement aux ports nécessaires</li>
+            <li>✓ Utilisez un VPN pour plus de sécurité lors de l'accès distant</li>
+            <li>✓ Mettez à jour régulièrement le firmware de votre routeur</li>
+            <li>✓ Activez le firewall sur votre routeur et vos ordinateurs</li>
+        </ul>
+
+        <h3>Risques potentiels :</h3>
+        <ul>
+            <li>⚠️ Un paquet WOL peut être envoyé par n'importe qui connaissant votre adresse MAC</li>
+            <li>⚠️ L'adresse MAC n'est PAS une information secrète (visible sur le réseau local)</li>
+            <li>⚠️ Le port forwarding expose votre réseau : soyez prudent</li>
+            <li>⚠️ Certains routeurs ont des failles de sécurité : maintenez-les à jour</li>
+        </ul>
+
+        <h3>Solutions sécurisées :</h3>
+        <ol>
+            <li><strong>VPN personnel</strong> : Installez un serveur VPN (WireGuard) sur votre réseau 
+                local et utilisez WOL via le VPN</li>
+            <li><strong>Authentification à deux facteurs</strong> : Utilisez des applications qui 
+                requièrent une authentification</li>
+            <li><strong>Whitelist IP</strong> : Configurez votre routeur pour n'accepter WOL que 
+                depuis certaines IP</li>
+        </ol>
+    </div>
+
+    <div class="help-section">
+        <h2>🛠️ Dépannage</h2>
+        
+        <h3>WOL ne fonctionne pas en local :</h3>
+        <ul>
+            <li>Vérifiez que WOL est activé dans le BIOS</li>
+            <li>Vérifiez les paramètres de la carte réseau (Windows)</li>
+            <li>Testez avec les ports 7 et 9</li>
+            <li>Essayez avec l'IP de broadcast (255.255.255.255)</li>
+            <li>Redémarrez complètement l'ordinateur (pas de mise en veille prolongée)</li>
+        </ul>
+
+        <h3>WOL ne fonctionne pas à distance :</h3>
+        <ul>
+            <li>Vérifiez la configuration du port forwarding</li>
+            <li>Testez avec votre IP publique</li>
+            <li>Vérifiez que votre FAI ne bloque pas les ports UDP</li>
+            <li>Essayez d'utiliser un VPN</li>
+        </ul>
+
+        <h3>Tests de diagnostic :</h3>
+        <div class="code-block">
+# Windows : Tester avec PowerShell<br>
+Test-NetConnection -ComputerName [IP] -Port [PORT]<br>
+<br>
+# Linux : Envoyer un paquet WOL manuel<br>
+wakeonlan AA:BB:CC:DD:EE:FF
+        </div>
+    </div>
+
+    <div class="help-section">
+        <h2>📖 Ressources supplémentaires</h2>
+        <ul>
+            <li><a href="https://fr.wikipedia.org/wiki/Wake-on-LAN" target="_blank" style="color: var(--primary-color);">
+                Wikipedia - Wake-on-LAN</a></li>
+            <li><a href="{{ url_for('contact') }}" style="color: var(--primary-color);">
+                Contactez-nous</a> pour toute question</li>
+        </ul>
+    </div>
+</div>
+
+<div style="text-align: center; margin-top: 2rem;">
+    <a href="{{ url_for('index') }}" class="btn btn-secondary">← Retour à l'accueil</a>
+    {% if session.user_id %}
+    <a href="{{ url_for('dashboard') }}" class="btn">Tableau de bord →</a>
+    {% endif %}
+</div>
+{% endblock %}
